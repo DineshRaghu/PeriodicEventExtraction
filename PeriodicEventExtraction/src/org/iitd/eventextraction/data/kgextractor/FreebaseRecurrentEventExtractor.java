@@ -128,7 +128,7 @@ public class FreebaseRecurrentEventExtractor {
 	         }
         }
         
-        CommonFunctions.WriteToFile("data//events.tsv", sb.toString());
+        CommonFunctions.WriteToFile("data//recurrent-events.tsv", sb.toString());
 	}
 	
 	public static void main(String[] args) {

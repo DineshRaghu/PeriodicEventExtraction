@@ -36,18 +36,20 @@ public class DistantSupervisionDataCreator {
 	public void AnnotateByDistantSupervision(String nytCorpusFolderPath, String eventsFile) {
 		
 		HashSet<String> events = GetListOfEvents(eventsFile);
+		
 		try {
 			List<File> files = CommonFunctions.GetFileListing(new File(nytCorpusFolderPath));
 			for(File f : files) {
 				if(f.getName().endsWith(".xml")) {
 					
 					ArrayList<String> contents = GetXmlContents(f);
+					
 					for (int i = 0; i < contents.size(); i++) {
 						for (String event : events) {
-							List<Integer> matches = findAll(event, contents.get(i));
+							List<Integer> matches = findAllMatches(event, contents.get(i));
 							if(matches.size() > 0) {
-								
-								System.out.println(contents.get(i) + "\n\t" + event + "\n\t" + f.getAbsolutePath());
+								// To create stand-off annotations
+								//System.out.println(contents.get(i) + "\n\t" + event + "\n\t" + f.getAbsolutePath());
 							}
 						}
 					}
@@ -82,7 +84,7 @@ public class DistantSupervisionDataCreator {
 		return events;
 	}
 	
-	public static List<Integer> findAll(String pattern, String source) {
+	public static List<Integer> findAllMatches(String pattern, String source) {
 		  List<Integer> idx = new ArrayList<Integer>();
 		  int id = -1;
 		  int shift = pattern.length();
