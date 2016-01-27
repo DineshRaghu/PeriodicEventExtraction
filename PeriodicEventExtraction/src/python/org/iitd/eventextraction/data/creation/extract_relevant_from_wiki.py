@@ -108,14 +108,9 @@ for pageid in pageids:
     
     f = open(pageid.strip() + 's.txt','w')
     g = open(pageid.strip() + '.txt','r')
-    
-    if (json.loads(g.read())):
-        g = open(pageid.strip() + '.txt','r')
-        pg_data = json.loads(g.read())
-    else:
-        print 'skipped : ' + pageid.strip()+ '(error in data)'
-        continue
+    pg_data = json.loads(g.read())
         
+    print(pg_data.keys())
     if (('error' in pg_data) or (len(pg_data) != 3)):
         print 'skipped : ' + pageid.strip()+ '(error in data)'
         continue
