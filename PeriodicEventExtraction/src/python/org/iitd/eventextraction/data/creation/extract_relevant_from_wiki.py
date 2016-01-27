@@ -43,7 +43,7 @@ def clean_para(para):
     if (re.search("File:|Image:",cleaned)):                 # if image caption of the form \n[[File(or Image):xx.jpg|thumb|400px|lalal [[Ganges|Ganga]] lalalaa]]
         # usually sentence starts with |[A-Z] or |[[
         # assumes paragraph is only \n[[File:....]]
-        m = re.search("\|[A-Z\[]",cleaned)
+        m = re.search("\|[^\|]+(\[|\])",cleaned)
         cleaned = cleaned[m.start()+1:]
     
     cleaned = re.sub('(?<=\[\[)[^\|\[]+(?=\|)','',cleaned)     # replace [[A|B]] -> [[|B]]
@@ -105,17 +105,29 @@ for pageid in pageids:
     if os.path.isfile(pageid.strip() + 's.txt'):
         print 'skipped : ' + pageid.strip()
         continue
+    
     f = open(pageid.strip() + 's.txt','w')
     g = open(pageid.strip() + '.txt','r')
-    pg_data = json.loads(g.read())
+    
+    if (json.loads(g.read())):
+        g = open(pageid.strip() + '.txt','r')
+        pg_data = json.loads(g.read())
+    else:
+        print 'skipped : ' + pageid.strip()+ '(error in data)'
+        continue
+        
+    if (('error' in pg_data) or (len(pg_data) != 3)):
+        print 'skipped : ' + pageid.strip()+ '(error in data)'
+        continue
+        
     bl_ref  = {}
     bl_ref['page-wiki-id']    = pageid
     bl_ref['page-wiki-title'] = pg_data['parent']['parse']['title']
     bl_ref['backlinks']       = []
     i = 0
-    print('\n===============================')
-    print bl_ref['page-wiki-title']
-    print('-------------------------------\n')
+#    print('\n===============================')
+#    print bl_ref['page-wiki-title']
+#    print('-------------------------------\n')
     
     for backlink in pg_data['query']['pages']:
         bl_ref['backlinks'].append({})
@@ -127,10 +139,10 @@ for pageid in pageids:
         else:
             continue
             
-        for ref in bl_ref['backlinks'][i]['parent-references']:
-            print ref['text']
-            print ref['mention-text'],ref['start']
-            print('\n')
+ #          for ref in bl_ref['backlinks'][i]['parent-references']:
+ #              print ref['text']
+ #              print ref['mention-text'],ref['start']
+ #              print('\n')
         i += 1
     
     f.write(json.dumps(bl_ref))
