@@ -9,6 +9,7 @@ import os
 # {{quote| lalala}} gets deleted
 # not able to handle EXTENSIVE NOTES (seen only one instance)
 # <sup>2</sup> - what to do?
+# single bracket links [http://...] still exist
 
 def find_mentions(para,title):
     # if [[Kumbh Mela]]           -> add Kumbh Mela
@@ -120,7 +121,12 @@ for pageid in pageids:
         bl_ref['backlinks'].append({})
         bl_ref['backlinks'][i]['backlink-wiki-id']    = backlink
         bl_ref['backlinks'][i]['backlink-wiki-title'] = pg_data['query']['pages'][backlink]['title']
-        bl_ref['backlinks'][i]['parent-references']   = extract_from_backlink_text(pg_data['query']['pages'][backlink]['revisions'][0]['*'],bl_ref['page-wiki-title'])
+        
+        if ('revisions' in pg_data['query']['pages'][backlink]):
+            bl_ref['backlinks'][i]['parent-references']   = extract_from_backlink_text(pg_data['query']['pages'][backlink]['revisions'][0]['*'],bl_ref['page-wiki-title'])
+        else:
+            continue
+            
         for ref in bl_ref['backlinks'][i]['parent-references']:
             print ref['text']
             print ref['mention-text'],ref['start']
